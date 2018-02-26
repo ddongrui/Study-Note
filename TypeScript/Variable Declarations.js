@@ -1,3 +1,20 @@
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
 /**
  * Created by dongrui on 2018/2/24.
  */
@@ -161,10 +178,106 @@ function theCityThatAlwaysSleeps() {
     }
     return getCity(); //"Seattle"
 }
-//当let声明变量时，不仅是在循环里引入了一个新的变量环境，而是针对每次迭代都会创建这样一个新作用域
-var _loop_1 = function(i_3) {
+var _loop_1 = function (i_3) {
     setTimeout(function () { console.log(i_3); }, 100 * i_3); //会输出与预料一致的结果：0 1 2 ...9
 };
+//当let声明变量时，不仅是在循环里引入了一个新的变量环境，而是针对每次迭代都会创建这样一个新作用域
 for (var i_3 = 0; i_3 < 10; i_3++) {
     _loop_1(i_3);
 }
+//7.const声明 拥有与let相同的作用域规则，但是不能对它们重新赋值。
+var numLivesForCat = 9;
+var kitty = {
+    name: "Aurora",
+    numLives: numLivesForCat
+};
+/*// Error:Left-hand side of assignment expression cannot be a constant.
+kitty = {
+    name: "Danielle",
+    numLives: numLivesForCat
+};*/
+// all "okay"
+kitty.name = "Rory";
+kitty.name = "Kitty";
+kitty.name = "Cat";
+kitty.numLives--;
+//8.let vs const  使用最小特权原则，所有变量除了你计划去修改的都应该使用const
+/*解构：解构赋值允许你使用数组或对象字面量的语法，将数组和对象的属性付给各种变量。
+展开：允许你讲一个数组展开为另一个数组，或一个对象展开为另一个对象。*/
+//9.解构数组
+var input = [1, 2];
+var first = input[0], second = input[1];
+console.log(first); // outputs 1
+console.log(second); // outputs 2
+// swap variables
+_a = [second, first], first = _a[0], second = _a[1];
+//作用于函数参数
+function f9(_a) {
+    var first = _a[0], second = _a[1];
+    console.log(first);
+    console.log(second);
+}
+//f9(input); //Error: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'.Property '0' is missing in type 'number[]'.
+//可以在数组里使用...语法创建剩余变量
+var _b = [1, 2, 3, 4], first2 = _b[0], rest = _b.slice(1);
+console.log(first2); // outputs 1
+console.log(rest); // outputs [ 2, 3, 4 ]
+//你可以忽略你不关心的尾随元素
+var _c = [1, 2, 3, 4], second2 = _c[1], fourth2 = _c[3];
+//10.对象解构
+var obj = {
+    a10: "foo",
+    b10: 12,
+    c10: "bar"
+};
+/*let { a10, b10 } = obj;
+//可以用没有声明的赋值
+({ a10, b10 } = { a10: "baz", b10: 101 });*/
+//在对象里使用...语法创建剩余变量：
+var a10 = obj.a10, passthrough = __rest(obj, ["a10"]);
+var total = passthrough.b10 + passthrough.c10.length;
+//11.属性重命名
+// 你可以将 a10: newName1 读做 “a10 作为 newName1“
+var newName1 = obj.a10, newName2 = obj.b10;
+// let {a10, b10}: {a10: string, b10: number} = obj;
+//12.默认值  可以让你在属性为 undefined 时使用缺省值
+function keepWholeObject(wholeObject) {
+    var a = wholeObject.a, _a = wholeObject.b, b = _a === void 0 ? 1001 : _a;
+}
+function f13(_a) {
+    var a = _a.a, b = _a.b;
+    // ...
+}
+function f131(_a) {
+    var _b = _a === void 0 ? { a: "", b: 0 } : _a, a = _b.a, b = _b.b;
+    // ...
+}
+f131(); // ok, default to { a: "", b: 0 }
+function f132(_a) {
+    var _b = _a === void 0 ? { a: "" } : _a, a = _b.a, _c = _b.b, b = _c === void 0 ? 0 : _c;
+    // ...
+}
+f132({ a: "yes" }); // ok, default b = 0
+f132(); // ok, default to {a: ""}, which then defaults b = 0
+//f132({}); // error, 'a' is required if you supply an argument
+//14.展开  允许你将一个数组展开为另一个数组，或将一个对象展开为另一个对象。
+var first4 = [1, 2];
+var second4 = [3, 4];
+var bothPlus = [0].concat(first4, second4, [5]);
+var defaults = { food: "spicy", price: "$$", ambiance: "noisy" };
+var search = __assign({}, defaults, { food: "rich" }); //defaults里的food属性会重写food: "rich"
+//展开一个对象实例时，你会丢失其方法
+var C1 = /** @class */ (function () {
+    function C1() {
+        this.p = 12;
+    }
+    C1.prototype.m = function () {
+    };
+    return C1;
+}());
+var c = new C1();
+var clone = __assign({}, c);
+clone.p; // ok
+var _a;
+//clone.m(); // Error:Property 'm' does not exist on type '{ p: number; }'.
+//TypeScript编译器不允许展开泛型函数上的类型参数

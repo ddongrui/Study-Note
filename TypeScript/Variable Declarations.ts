@@ -178,3 +178,114 @@ function theCityThatAlwaysSleeps() {
 for (let i = 0; i < 10 ; i++) {
     setTimeout(function() {console.log(i); }, 100 * i); //会输出与预料一致的结果：0 1 2 ...9
 }
+
+
+//7.const声明 拥有与let相同的作用域规则，但是不能对它们重新赋值。
+const numLivesForCat = 9;
+const kitty = {
+    name: "Aurora",
+    numLives: numLivesForCat,
+}
+
+/*// Error:Left-hand side of assignment expression cannot be a constant.
+kitty = {
+    name: "Danielle",
+    numLives: numLivesForCat
+};*/
+
+// all "okay"
+kitty.name = "Rory";
+kitty.name = "Kitty";
+kitty.name = "Cat";
+kitty.numLives--;
+
+
+//8.let vs const  使用最小特权原则，所有变量除了你计划去修改的都应该使用const
+
+
+/*解构：解构赋值允许你使用数组或对象字面量的语法，将数组和对象的属性付给各种变量。
+展开：允许你讲一个数组展开为另一个数组，或一个对象展开为另一个对象。*/
+//9.解构数组
+let input = [1, 2];
+let [first, second] = input;
+console.log(first); // outputs 1
+console.log(second); // outputs 2
+// swap variables
+[first, second] = [second, first];
+//作用于函数参数
+function f9([first, second]: [number, number]) {
+    console.log(first);
+    console.log(second);
+}
+//f9(input); //Error: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'.Property '0' is missing in type 'number[]'.
+//可以在数组里使用...语法创建剩余变量
+let [first2, ...rest] = [1, 2, 3, 4];
+console.log(first2); // outputs 1
+console.log(rest); // outputs [ 2, 3, 4 ]
+//你可以忽略你不关心的尾随元素
+let [, second2, , fourth2] = [1, 2, 3, 4];
+
+
+//10.对象解构
+let obj = {
+    a10: "foo",
+    b10: 12,
+    c10: "bar"
+};
+/*let { a10, b10 } = obj;
+//可以用没有声明的赋值
+({ a10, b10 } = { a10: "baz", b10: 101 });*/
+//在对象里使用...语法创建剩余变量：
+let { a10, ...passthrough } = obj;
+let total = passthrough.b10 + passthrough.c10.length;
+
+
+//11.属性重命名
+// 你可以将 a10: newName1 读做 “a10 作为 newName1“
+let { a10: newName1, b10: newName2 } = obj;
+// let {a10, b10}: {a10: string, b10: number} = obj;
+
+
+//12.默认值  可以让你在属性为 undefined 时使用缺省值
+function keepWholeObject(wholeObject: { a: string, b?: number }) {
+    let { a, b = 1001 } = wholeObject;
+}
+
+
+//13.函数声明  解构表达式要尽量保持小而简单
+type C = { a: string, b?: number }
+function f13({ a, b }: C): void {
+    // ...
+}
+
+function f131({ a, b } = { a: "", b: 0 }): void {
+    // ...
+}
+f131(); // ok, default to { a: "", b: 0 }
+
+function f132({ a, b = 0 } = { a: "" }): void {
+    // ...
+}
+f132({ a: "yes" }); // ok, default b = 0
+f132(); // ok, default to {a: ""}, which then defaults b = 0
+//f132({}); // error, 'a' is required if you supply an argument
+
+
+//14.展开  允许你将一个数组展开为另一个数组，或将一个对象展开为另一个对象。
+let first4 = [1, 2];
+let second4 = [3, 4];
+let bothPlus = [0, ...first4, ...second4, 5];
+
+let defaults = { food: "spicy", price: "$$", ambiance: "noisy" };
+let search = { ...defaults, food: "rich" }; //defaults里的food属性会重写food: "rich"
+//展开一个对象实例时，你会丢失其方法
+class C1 {
+    p = 12;
+    m() {
+    }
+}
+let c = new C1();
+let clone = { ...c };
+clone.p; // ok
+//clone.m(); // Error:Property 'm' does not exist on type '{ p: number; }'.
+//TypeScript编译器不允许展开泛型函数上的类型参数
