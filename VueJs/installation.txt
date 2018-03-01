@@ -1,0 +1,17 @@
+1.兼容性
+  Vue.js 不支持 IE8 及其以下版本，因为 Vue.js 使用的 ECMAScript 5 特性在 IE8 无法模拟。
+  Vue.js 支持所有兼容 ECMAScript 5 的浏览器。
+
+2.直接引入 <script> 标签
+
+3.CDN:https://cdn.jsdelivr.net/npm/vue
+
+4.NPM:npm install vue
+  # 安装 vue-cli
+  $ npm install --global vue-cli
+  # 使用 "webpack" 模板创建一个新项目
+  $ vue init webpack my-project
+  # 安装依赖，然后开始！
+  $ cd my-project
+  $ npm install
+  $ npm run dev
